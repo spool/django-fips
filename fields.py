@@ -1,7 +1,7 @@
-from django.contrib.localflavor.us.models import USStateField
 from django.contrib.localflavor.us import us_states
+from django.contrib.localflavor.us.models import USStateField
 from django.db import models
-from . import *
+from . import US_STATE_CHAR2FIPS, US_STATE_FIPS, US_STATE_FIPS_SHORT
 
 class USStateFipsCode:
     """A US state class which includes FIPS characters and numbers."""
@@ -44,11 +44,17 @@ class InvalidFIPS(Exception):
 
 class USStateFipsField(USStateField):
 
-    #__metaclass__ = models.SubfieldBase # Ensures to_python is always called.
+    __metaclass__ = models.SubfieldBase # Ensures to_python is always called.
 
     def to_python(self, value):
         if isinstance(value, USStateFipsCode):
             return value
+        else:
+            return USStateFipsCode(value)
+
+    def get_prep_value(self, value):
+        return value.code
+
 
 
 
