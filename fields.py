@@ -7,31 +7,39 @@ class USStateFipsCode:
     """A US state class which includes FIPS characters and numbers."""
 
     def __init__(self, code):
-        if isinstance(code, str) or isinstance(code, unicode):
-            if code in US_STATE_CHAR2FIPS:
-                self.code = code
-            elif code in us_states.STATES_NORMALIZED:
-                self.code = us_states.STATES_NORMALIZED[code]
-            else:
+        if code:
+            if isinstance(code, str) or isinstance(code, unicode):
+                if code in US_STATE_CHAR2FIPS:
+                    self.code = code
+                elif code in us_states.STATES_NORMALIZED:
+                    self.code = us_states.STATES_NORMALIZED[code]
+                else:
+                    try:
+                        code = str(int(code))
+                        self.code = US_STATE_FIPS_SHORT[code]
+                    except:
+                        raise InvalidFIPS(code)
+            if isinstance(code, int) or isinstance(code, float):
                 try:
                     code = str(int(code))
                     self.code = US_STATE_FIPS_SHORT[code]
                 except:
                     raise InvalidFIPS(code)
-        if isinstance(code, int) or isinstance(code, float):
-            try:
-                code = str(int(code))
-                self.code = US_STATE_FIPS_SHORT[code]
-            except:
-                raise InvalidFIPS(code)
-        self.number = int(US_STATE_CHAR2FIPS[self.code])
-        self.name = US_STATE_FIPS[str(self.number)]
+            self.number = int(US_STATE_CHAR2FIPS[self.code])
+            self.name = US_STATE_FIPS[str(self.number)]
+        else:
+            self.code = None
+            self.name = None
+            self.number = None
 
     def __unicode__(self):
         return self.name
 
     def __repr__(self):
-        return "USStateField('%s')" % self.code
+        try:
+            return "<%s: %s>" % (self.__class__.__name__, self.code)
+        except AttributeError:
+            return None
 
 class InvalidFIPS(Exception):
 
@@ -53,8 +61,5 @@ class USStateFipsField(USStateField):
             return USStateFipsCode(value)
 
     def get_prep_value(self, value):
-        return value.code
-
-
-
+        if value: return value.code
 
