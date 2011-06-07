@@ -113,3 +113,7 @@ US_STATE_FIPS_SHORT = {
     }
 
 US_STATE_CHAR2FIPS = dict([v,k] for k, v in US_STATE_FIPS_SHORT.iteritems())
+
+NON_CONTINENTAL_CHARS = ['AK','HI','GU','PR','VI']
+
+CONTINENTAL_CHARS = [x for x in US_STATE_CHAR2FIPS if x not in NON_CONTINENTAL_CHARS]
