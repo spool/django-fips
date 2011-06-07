@@ -19,23 +19,24 @@ class USStateFipsFieldTest(FIPSTest):
 
     def instance_equals_alaska(self, instance):
         self.equals_alaska(instance.fips)
-        self.equals_alaska(instance.fips_null)
+        self.equals_alaska(instance.fips_blank)
         self.equals_alaska(instance.fips_blank_null)
+        self.equals_alaska(instance.fips_null)
 
     def testSave(self):
         a = FIPSTestModel(fips=2, fips_blank=2.0, fips_null='ak', fips_blank_null='AK')
         a.save()
         self.instance_equals_alaska(a)
-        self.instance_equals_alaska(FIPSTestModel.objects.get(id=1))
+        b = FIPSTestModel.objects.get(id=a.id)
+        self.instance_equals_alaska(b)
 
     def testNull(self):
         a = FIPSTestModel(fips=2, fips_blank=2.0)
         a.save()
         self.equals_alaska(a.fips)
-        #self.equals_alaska(a.fips_blank)
-        #self.equals_alaska(FIPSTestModel.objects.get(id=1).fips)
-        #self.equals_alaska(FIPSTestModel.objects.get(id=1).fips_blank)
-
+        self.equals_alaska(a.fips_blank)
+        self.equals_alaska(FIPSTestModel.objects.get(id=a.id).fips)
+        self.equals_alaska(FIPSTestModel.objects.get(id=a.id).fips_blank)
 
 class USStateFipsClassTest(FIPSTest):
 

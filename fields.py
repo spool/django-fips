@@ -61,5 +61,4 @@ class USStateFipsField(USStateField):
             return USStateFipsCode(value)
 
     def get_prep_value(self, value):
-        if value: return value.code
-
+        return value.code
