@@ -8,29 +8,34 @@ class USStateFipsCode:
 
     def __init__(self, code):
         if code:
-            if isinstance(code, str) or isinstance(code, unicode):
-                if code in US_STATE_CHAR2FIPS:
-                    self.code = code
-                elif code in us_states.STATES_NORMALIZED:
-                    self.code = us_states.STATES_NORMALIZED[code]
-                else:
-                    try:
-                        code = str(int(code))
-                        self.code = US_STATE_FIPS_SHORT[code]
-                    except:
-                        raise InvalidFIPS(code)
-            if isinstance(code, int) or isinstance(code, float):
-                try:
-                    code = str(int(code))
-                    self.code = US_STATE_FIPS_SHORT[code]
-                except:
-                    raise InvalidFIPS(code)
+            self.code = self.force_2char(code)
             self.number = int(US_STATE_CHAR2FIPS[self.code])
             self.name = US_STATE_FIPS[str(self.number)]
         else:
             self.code = None
             self.name = None
             self.number = None
+
+    @staticmethod
+    def force_2char(value):
+        if value:
+            if isinstance(value, str) or isinstance(value, unicode):
+                if value in US_STATE_CHAR2FIPS:
+                    return value
+                elif value in us_states.STATES_NORMALIZED:
+                    return us_states.STATES_NORMALIZED[value]
+                else:
+                    try:
+                        value = str(int(value))
+                        return US_STATE_FIPS_SHORT[value]
+                    except:
+                        raise InvalidFIPS(value)
+            if isinstance(value, int) or isinstance(value, float):
+                try:
+                    value = str(int(value))
+                    return US_STATE_FIPS_SHORT[value]
+                except:
+                    raise InvalidFIPS(value)
 
     def __unicode__(self):
         return self.name
@@ -62,3 +67,9 @@ class USStateFipsField(USStateField):
 
     def get_prep_value(self, value):
         return value.code
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], ["^fips\.fields\.USStateFipsField"])
+except:
+    pass
+
