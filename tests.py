@@ -38,6 +38,16 @@ class USStateFipsFieldTest(FIPSTest):
         self.equals_alaska(FIPSTestModel.objects.get(id=a.id).fips)
         self.equals_alaska(FIPSTestModel.objects.get(id=a.id).fips_blank)
 
+class QueryTest(FIPSTest):
+
+    def setUp(self):
+        self.a = FIPSTestModel.objects.create(fips=2, fips_blank=2.0, fips_null='ak', fips_blank_null='AK')
+        self.b = FIPSTestModel.objects.create(fips=56, fips_blank=56.0, fips_null='wy', fips_blank_null='WY')
+
+    def testFlatValuesList(self):
+        print type(u'AK')
+        self.assertEqual(FIPSTestModel.objects.values_list('fips_blank', flat=True), [u'AK', u'WY'])
+
 class USStateFipsClassTest(FIPSTest):
 
     def testSimpleAlaska(self):
