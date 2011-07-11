@@ -8,6 +8,12 @@ class FIPSTestModel(models.Model):
     fips_null = fields.USStateFipsField(null=True)
     fips_blank_null = fields.USStateFipsField(blank=True, null=True)
 
+    def __unicode__(self):
+        "fips: %s|fips_blank: %s|fips_null: %s|fips_blank_null: %s" % (
+                repr(self.fips), repr(self.fips_blank), repr(self.fips_null),
+                repr(self.fips_blank_null)
+                )
+
 class FIPSTest(unittest.TestCase):
 
     def equals_alaska(self, ak):
@@ -44,8 +50,10 @@ class QueryTest(FIPSTest):
         self.a = FIPSTestModel.objects.create(fips=2, fips_blank=2.0, fips_null='ak', fips_blank_null='AK')
         self.b = FIPSTestModel.objects.create(fips=56, fips_blank=56.0, fips_null='wy', fips_blank_null='WY')
 
+    def testQuerySetFilter(self):
+        self.assertEqual(FIPSTestModel.objects.filter(fips=fields.USStateFipsCode('AK'))[0], self.a)
+
     def testFlatValuesList(self):
-        print type(u'AK')
         self.assertEqual(FIPSTestModel.objects.values_list('fips_blank', flat=True), [u'AK', u'WY'])
 
 class USStateFipsClassTest(FIPSTest):

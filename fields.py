@@ -67,6 +67,7 @@ class USStateFipsField(USStateField):
 
     def get_prep_value(self, value):
         return value.code
+
 try:
     from south.modelsinspector import add_introspection_rules
     add_introspection_rules([], ["^fips\.fields\.USStateFipsField"])
